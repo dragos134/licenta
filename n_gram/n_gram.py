@@ -28,7 +28,7 @@ def n_gram(n : int, train : list, test : list):
     
     # scriem n-gramele in fisier
     n_gram_file = open(f"{n}{GRAM_FILE}", 'w')
-    for i, tweet in enumerate(tweets):
+    for tweet in tweets:
         tweet = tweet.split(' ')
         for j in range(len(tweet) - n + 1):
             curr_load = []
@@ -100,9 +100,9 @@ if __name__ == "__main__":
     train_set, test_set = pickle.load(f)
     f.close()
     # partea de scris in fisiere
-    # for i in range(MAX_GRAM):
-    #     n_gram(i + 1, train_set, test_set)
-    #     print(f's-a terminate seria {i + 1}')
+    for i in range(MAX_GRAM):
+        n_gram(i + 1, train_set, test_set)
+        print(f's-a terminate seria {i + 1}')
 
     # partea de antrenat cu SVM
     for i in range(MAX_GRAM):
