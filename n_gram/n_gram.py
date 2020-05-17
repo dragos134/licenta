@@ -12,7 +12,7 @@ from sklearn import naive_bayes
 DATASET = '../dataset.pkl.gz'
 GRAM_FILE = '-gram.txt'
 GRAM_PKL = '-gram.pkl.gz'
-MAX_GRAM = 2
+MAX_GRAM = 1
 
 def n_gram(n : int, train : list, test : list):
     '''
@@ -100,11 +100,13 @@ if __name__ == "__main__":
     train_set, test_set = pickle.load(f)
     f.close()
     # partea de scris in fisiere
-    for i in range(MAX_GRAM):
-        n_gram(i + 1, train_set, test_set)
-        print(f's-a terminate seria {i + 1}')
+    # for i in range(MAX_GRAM):
+    #     n_gram(i + 1, train_set, test_set)
+    #     print(f's-a terminate seria {i + 1}')
 
     # partea de antrenat cu SVM
     for i in range(MAX_GRAM):
         SVM_train_n_gram(i + 1)
         print(f"s-a terminat seria {i + 1}")
+
+    # regresie logistica

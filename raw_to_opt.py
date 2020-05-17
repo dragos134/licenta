@@ -112,7 +112,7 @@ def optimize_text(tweets : str) -> str:
     ret_text = ret_text.replace('\n', ' ').replace('\t', ' ')
 
     # transform aronds
-    ret_text = re.sub(f"@[^ \n]+[ \n\x00{TWEET_SEP}{TXT_SEP}]", '@ ', ret_text)
+    ret_text = re.sub(f"@[^ \n]+[ \n\x00{TWEET_SEP}{TXT_SEP}]", ' REF ', ret_text)
 
     # transform emojies
     emojiz = open("emoji.txt").read().split('\n')
