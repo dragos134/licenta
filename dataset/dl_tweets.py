@@ -32,11 +32,6 @@ try:
                         other_text = list(set([x.get_text() for x in o_t]))
                         other_tweets += other_text					
                     tweets = list(set(tweets)-set(other_tweets))
-                    #print 'Other tweets\n'			
-                    #print other_tweets                
-                        #print tweets
-                    #print '\n'        
-                    #continue
                 text = tweets[0]
                 item_dict[tweetid] = tweets[0]
                 for j in soup.find_all("input", "json-data", id="init-data"):

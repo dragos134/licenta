@@ -1,0 +1,36 @@
+\chapter*{Introducere} 
+\addcontentsline{toc}{chapter}{Introducere}
+
+Problema reacțiilor adverse ale medicamentelor este una de mare notorietate 
+în lumea medicinală. Cei care au cel mai mult de suferit și de pierdut de pe
+urma acestei probleme sunt consumatorii acestora, aceștia putându-și pune viața
+în pericol în anumite cazuri (prescripții greșite, nerespectarea prescripției),
+însă afectate sunt și companiile, producătorii și toți cei care lucrează în sfera
+farmaceuticelor. 
+
+Reacțiile adverse ale medicamentelor înseamna orice simptome neprevăzute, malicioase
+pe care pacientul le simte după un anumit interval de timp de la ingerarea medicamentului.
+Pentru a se preveni această problemă, se efectuează seturi de teste, pe pacienți care se
+înscriu voluntar la această acțiune, însă, există cazuri în care aceste teste nu sunt
+suficiente, iar la momentul lansării medicamentului, oamenii să experimenteze reacții
+adverse. Acest fapt este bine cunoscut de toată lumea, de aceea se colectează mereu
+date despre efectele medicamentelor și după lansare. Colectarea se dovedește a fi
+destul de minuțioasă, deoarece nu toți pacienții vorbesc cu doctorii lor despre aceste
+lucruri, dar și din alte motive. Ideea este ca nu există o metodă standardizată pentru
+colectarea datelor referitoare la efectele acestor medicamente.
+
+S-a observat că unii pacienți preferă să-și exprime nemulțumirea, alături de efectele
+adverse ale medicamentelor, în mediul online. Dar, desigur că și de aici este anevoios
+de extras anumite informații, din cauza unor exprimări precare, utilizarea argourilor, etc.
+La Workshop-ul AMIA-2017, prin intermediul unui concurs, s-a încercat rezolvarea acestei
+ramuri a problemei. La concurs au putut participa echipe din toată lumea, iar în total au
+fost desemnate trei probleme. Eu în această lucrare mă voi axa doar pe una, cea descrisă mai sus.
+
+Pentru rezolvarea acestei probleme, am încercat antrenarea unui model care să aibă în final 
+un scor cât mai mare la testare, inspirându-mă din lucrarea de \href{https://arxiv.org/pdf/1805.04558.pdf}{aici}. 
+Am încercat prin două metode de transformare a textului 
+într-un format ușor de înțeles de către calculator (transformând în vectori de numere),
+acestea fiind n-grame-ele, care s-au dovedit a nu da un scor foarte bun, și transformarea
+word2vec, combinată cu un algoritm SVM din biblioteca sci-kit learn, care a dat și rezultatele
+cele mai bune.
+

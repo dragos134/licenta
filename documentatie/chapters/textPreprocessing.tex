@@ -1,0 +1,26 @@
+\chapter{Preprocesarea limbajului}
+
+Primul pas pe care l-am folosit pentru antrenarea modelului a fost preprocesarea textului.
+Deoarece textele noastre, ca date de antrenare și de testare, sunt postări de pe \href{https://twitter.com/home}{Twitter},
+ele vor avea un limbaj informal, cuvinte prescurtate, argouri, ceea ce face antrenarea modelului nostru
+dificilă. Ca urmare a acestui fapt, am preprocesat textul pentru a-l aduce într-o formă relativ mai ușoară 
+de înțeles pentru calculator.
+
+Primul pas, alături de cel de-al doilea, au fost inspirați din lucrarea aceasta, aceștia constând în 
+înlocuirea unor termeni specifici (medicamentele și reacțiile adverse) cu un simbol, deoarece acestea nu sunt
+relevante în clasificarea tweet-urilor. Am folosit o listă
+de medicamente și de reacții adverse de pe situl celor de la \href{http://diego.asu.edu/Publications/ADRClassify.html}{Diego Lab}.
+Am înlocuit medicamentele cu simbolul "MED", iar reacțiile adverse cu "ADR".
+
+Următorul pas, cel de-al treilea, a fost înlocuirea cuvintelor prescurtate, de tipul "i'm", "you're", în cuvinte întregi,
+pentru a restrânge numărul cuvintelor totale, dar și pentru a le da un sens mai puternic acestora.
+
+Al patrulea pas, unul care nu este important de unul singur, dar prinde valoare datorită următorilor pași, este
+cel de înlocuirea url-urilor cu un simbol specific. Url-urile având caractere speciale (":", "/") care trebuie și 
+ele eliminate din text, se vor crea cuvinte nefolositoare, de exemplu "http". Simbolul folosit pentru acestea este "LINK".
+
+Al cincilea pas constă în înlocuirea referințelor către alte persoane, de forma "@cineva", într-un simbol specific ("REF"),
+deoarece acestea conțin diferite nume, care nu au nicio importanță.
+
+Ultimul pas cuprinde eliminarea din text a majoritatății caracterelor non-alfanumerice pentru a mai aerisi textul și a despărți unele cuvinte de acestea,
+existând situații când aceste caractere, fiind lipite de cuvinte, construiesc altele noi.

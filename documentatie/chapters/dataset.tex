@@ -1,0 +1,19 @@
+\chapter{Setul de date}
+
+Setul de date pentru această sarcină a fost preluat din cadrul unui
+proiect de detectare a efectelor adverse ale medicamentelor de către
+DIEGO Lab, din cadrul universtății "Arizona State University". Acestea
+au fost preluate făcându-se căutări pe baza numelor de medicamente, după 
+care niște experți în domeniul farmaceutic le-au clasificat în cele două
+categorii (conțin sau nu conțin reacții adverse ale medicamentelor).
+
+Tweet-urile au fost furnizate pe bază de ID-uri, ele trebuind descărcate
+utilizând un script în python 2.*. Lucrând în python 3.* a trebuit să-mi
+creez eu acest script (pe baza celui dat). Descărcarea acestora a durat
+aproximativ o oră, iar din această cauză le-am salvat local, nemaifiind
+nevoie să-l rulez din nou. Din cele 15667 de ID-uri primite, doar 9257 au rămas valabile.
+Din acestea 9257, am folosit 70\% din acestea pentru setul de antrenament, iar restul
+de 30\% pentrul setul de test.
+
+O mare problemă cu acest set de date este faptul că este o mare diferență dintre
+numarul de date de clasă 0 si numărul de date de clasă 1 (datele sunt nebalansate).
