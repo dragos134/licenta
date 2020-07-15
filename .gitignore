@@ -1,3 +1,5 @@
-*dataset.pkl.gz
-*-gram.pkl.gz
-*-gram.txt
+*pkl.gz
+*txt
+*csv
+training.160*
+*model*

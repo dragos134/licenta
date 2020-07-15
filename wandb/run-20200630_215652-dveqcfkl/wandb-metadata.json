@@ -1,0 +1,23 @@
+{
+    "root": "/home/dragosc/Desktop/facultate/licenta",
+    "program": "/home/dragosc/Desktop/facultate/licenta/fasttext/fasttext_train.py",
+    "git": {
+        "remote": "git@github.com:dragos134/licenta.git",
+        "commit": "d4da3ee8cdb5b54b17fa8def2dba7b7e3d7aa92e"
+    },
+    "email": "dragos@dragos-pc.com\\n",
+    "startedAt": "2020-06-30T21:56:52.693058",
+    "host": "dragos-pc",
+    "username": "dragosc",
+    "executable": "/usr/bin/python3",
+    "os": "Linux-5.4.0-39-generic-x86_64-with-glibc2.29",
+    "python": "3.8.2",
+    "cpu_count": 4,
+    "args": [],
+    "state": "finished",
+    "jobType": null,
+    "mode": "run",
+    "project": "bachelor",
+    "heartbeatAt": "2020-06-30T21:59:10.085141",
+    "exitcode": 0
+}

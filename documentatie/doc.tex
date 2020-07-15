@@ -1,14 +1,19 @@
 \documentclass[12pt]{report}
 
 % includes
+\usepackage{amsmath}
+\usepackage{appendix}
 \usepackage{geometry}           % page size
+\usepackage{pgfplots}
 \usepackage[utf8]{inputenc}     % encoding
 \usepackage{palatino}           % font
-% \usepackage[romanian]{babel}    % language
+\usepackage[romanian]{babel}    % language
 \usepackage{graphicx}           % images
 \usepackage{indentfirst}        % indentation
 \usepackage[nottoc]{tocbibind}  % table of contents style
 \usepackage[unicode]{hyperref}  % references from the table of contents
+
+\pgfplotsset{width=10cm, compat=1.8}
 
 % includes options
 \geometry{  a4paper,            % scientific thesis standard
@@ -33,12 +38,13 @@
     
     \input{front/cover}
     \input{front/titlepage}
-    \input{front/declaration1}
-    \input{front/declaration2}
+    \input{chapters/titlePage.tex}
+    % \input{front/declaration1}
+    % \input{front/declaration2}
     
     % table of contents
     \tableofcontents
-    
+
     % chapters
     \setcounter{page}{1}
     \pagenumbering{arabic}
@@ -46,13 +52,16 @@
     \input{chapters/motivation}
     \input{chapters/introduction}
     \input{chapters/contributions.tex}
+
     
     \input{chapters/dataset.tex}
     \input{chapters/textPreprocessing.tex}
+    \input{chapters/balancing.tex}
     \input{chapters/languageProcessing.tex}
-    % \input{chapters/chapter2}
-    % \input{chapters/chapter3}
+    \input{chapters/classifiers.tex}
+    \input{chapters/results.tex}
+    % \input{chapters/howTo.tex}
     
-    \input{chapters/conclusions}
-    \input{chapters/bibliography}
+    \input{chapters/conclusions.tex}
+    \input{chapters/bibliography.tex}
 \end{document}

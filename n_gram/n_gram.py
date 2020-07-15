@@ -148,7 +148,7 @@ def n_gram(n : int, train : list, test : list, firstx : int):
     # transformam datele in vectori de 0 si 1
     train_n_gram = []
     n_gram_size = len(my_dict)
-    for i, tweet in enumerate(tweets):
+    for tweet in tweets:
         tweet = tweet.split(' ')
         curr_load = [0] * n_gram_size
         for j in range(len(tweet) - n + 1):
@@ -209,14 +209,14 @@ if __name__ == "__main__":
     train_set, test_set = pickle.load(f)
     f.close()
     # partea de scris in fisiere
-    # for i in range(MAX_GRAM):
-    #     print(f'a inceput seria {i+1} de scris in fisier')
-    #     n_gram(i + 1, train_set, test_set, 20000)
-    #     print(f's-a terminate seria {i + 1}')
+    for i in range(MAX_GRAM):
+        print(f'a inceput seria {i+1} de scris in fisier')
+        n_gram(i + 1, train_set, test_set, 20000)
+        print(f's-a terminate seria {i + 1}')
 
     # partea de antrenat cu SVM
-    for i in range(MAX_GRAM):
-        SVM_train_n_gram(i + 1)
-        print(f"s-a terminat seria {i + 1}")
+    # for i in range(MAX_GRAM):
+    #     SVM_train_n_gram(i + 1)
+    #     print(f"s-a terminat seria {i + 1}")
 
     # regresie logistica

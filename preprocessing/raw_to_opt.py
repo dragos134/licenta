@@ -139,36 +139,41 @@ def optimize_text(tweets : str) -> str:
     print("Inlocuirea medicamentelor s-a terminat in %.2f secunde" % (time.time() - start_time))
 
     #replace "'" words
-    f = open(SHORTS, 'r')
-    text = f.read().split('\n')
-    for word in text:
-        word = word.split(',')
-        ret_text = ret_text.replace(word[0], word[1])
-    f.close()
+    # f = open(SHORTS, 'r')
+    # text = f.read().split('\n')
+    # for word in text:
+    #     word = word.split(',')
+    #     ret_text = ret_text.replace(word[0], word[1])
+    # f.close()
 
     # transform links
     ret_text = re.sub(r"http[^\s\x02\x01]*", ' LINK ', ret_text)
+
+    # # transform aronds
+    # ret_text = re.sub(f"@[^ \n\x00{TWEET_SEP}{TXT_SEP}]+", ' REF ', ret_text)
     
-    # remove punctuation
-    ret_text = ret_text.replace(',', ' ').replace('.', ' ').replace("\x27", ' ')
-    ret_text = ret_text.replace('?', ' ').replace('!', ' ')
-    ret_text = ret_text.replace(';', ' ').replace('"', ' ').replace('“', ' ').replace('”', ' ')
-    ret_text = ret_text.replace('\n', ' ').replace('\t', ' ')
+    ret_text = re.sub(r'[^a-zA-Z01\'\x01\x02]', ' ', ret_text)
 
-    # transform aronds
-    ret_text = re.sub(f"@[^ \n\x00{TWEET_SEP}{TXT_SEP}]+", ' REF ', ret_text)
+    ret_text = re.sub(r'[^\x00-\x7F]+', '', ret_text)
 
-    # transform emojies
-    emojiz = open(EMOJI).read().split('\n')
-    for i in emojiz:
-        i = i.split(' ')
-        ret_text = ret_text.replace(i[0], f" {i[1]} ")
+    # # remove punctuation
+    # ret_text = ret_text.replace(',', ' ').replace('.', ' ').replace("\x27", ' ')
+    # ret_text = ret_text.replace('?', ' ').replace('!', ' ')
+    # ret_text = ret_text.replace(';', ' ').replace('"', ' ').replace('“', ' ').replace('”', ' ')
+    # ret_text = ret_text.replace('\n', ' ').replace('\t', ' ')
 
-    # remove extra chars
-    ret_text = ret_text.replace('\x2F', ' ').replace('=', ' ').replace(':', ' ').replace('#', ' ').replace('*', ' ').replace('-', ' ').replace('…', ' ')
 
-    # remove paranthesis
-    ret_text = ret_text.replace('(', ' ').replace(')', ' ').replace('[', ' ').replace(']', ' ')
+    # # transform emojies
+    # emojiz = open(EMOJI).read().split('\n')
+    # for i in emojiz:
+    #     i = i.split(' ')
+    #     ret_text = ret_text.replace(i[0], f" {i[1]} ")
+
+    # # remove extra chars
+    # ret_text = ret_text.replace('\x2F', ' ').replace('=', ' ').replace(':', ' ').replace('#', ' ').replace('*', ' ').replace('-', ' ').replace('…', ' ').replace('@', ' ').replace('\\', ' ')
+
+    # # remove paranthesis
+    # ret_text = ret_text.replace('(', ' ').replace(')', ' ').replace('[', ' ').replace(']', ' ').replace('<', ' ').replace('>', ' ')
 
     # remove extra spaces
     ret_text = ret_text.replace('    ', ' ').replace('   ', ' ').replace('  ', ' ')
@@ -176,6 +181,7 @@ def optimize_text(tweets : str) -> str:
     # remove first and last spaces
     ret_text = re.sub(f'{TXT_SEP} ', TXT_SEP, ret_text)
     ret_text = re.sub(f' {TWEET_SEP}', TWEET_SEP, ret_text)
+    ret_text = ret_text.lower()
     return ret_text
 
 def balance_training_data(train : list, ratio : int) -> list:

@@ -8,7 +8,13 @@ import time
 import copy
 import random
 from sklearn import svm, preprocessing
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
+from keras.models import Sequential
+from keras.layers import Dense, Input, LSTM
+from keras import metrics
+from sklearn.naive_bayes import GaussianNB, MultinomialNB, ComplementNB
+from sklearn.linear_model import LogisticRegression
+import wandb
+from wandb.keras import WandbCallback
 
 BLNC = 70
 
@@ -99,6 +105,8 @@ def smote_balance(train : list) -> list:
     count = 0
     time_vec = []
     print(len(true_set[0]), len(false_set[0]))
+    lt = len(true_set[0])
+    lf = len(false_set[0])
     for i in range(len(true_set[0]), len(false_set[0])):
         count += 1
         start_time = time.time()
@@ -106,6 +114,7 @@ def smote_balance(train : list) -> list:
         # print('%.2f' % (time.time() - start_time))
         time_vec.append(time.time() - start_time)
         true_set[1].append(1)
+        print('%.2f la suta completed' % ((i - lt) / (lf - lt)), end='\r')
     print(sum(time_vec) / count)
     
     new_train = [true_set[0] + false_set[0], true_set[1] + false_set[1]]
@@ -117,7 +126,6 @@ def smote_balance(train : list) -> list:
 
 def test(test_output : list, prediction : list) -> float:
     count = 0
-    proc = 0
     for i in range(len(prediction)):
         if test_output[i] == prediction[i]:
             count += 1
@@ -128,7 +136,6 @@ def f_score(test_output : list, prediction : list) -> float:
     false_positives = 0
     false_negatives = 0
     true_negatives = 0
-    print(len(prediction), len(test_output))
     for i in range(len(prediction)):
         if test_output[i] == 1:
             if prediction[i] == 1:
@@ -171,14 +178,12 @@ def train(train_set : list, test_set : list, my_clf) -> float:
 
     best_clf = clf
 
-    print("Se face prezicerea pe setul de test")
+    print("Se face prezicerea pe setul de test...")
     prediction = clf.predict(test_set[0])
 
-    proc1 = test(test_set[1], prediction)
-    print(proc1)
+    best_accuracy = test(test_set[1], prediction)
 
     best_fscore = f_score(test_set[1], prediction)
-    print('s-a obtinut fscorul %.3f' % best_fscore)
 
 
     #cross validation fit
@@ -191,32 +196,33 @@ def train(train_set : list, test_set : list, my_clf) -> float:
     clf = copy.deepcopy(my_clf)
     i = 0
     proc = 0
-    while i < 10 and proc < 99:
-        print(f"Epoca {i+1}: ", end='')
+    while i < 10:
+        print(f"Epoca {i+1}: ", end='\r')
         clf.fit(train[0], train[1])
         prediction = clf.predict(valid[0])
         proc = test(valid[1], prediction)
-        fscore = f_score(valid[1], prediction)
-        print("%.3f" % proc)
-        print("f-score-ul pentru clasa 1 este %.3f" % (fscore))
+        fscore1 = f_score(valid[1], prediction)
+        
+        # print("%.3f" % proc)
+        # print("f-score-ul pentru clasa 1 este %.3f" % (fscore))
         prediction = clf.predict(test_set[0])
-        print("f-score-ul pentru setul de test este %.3f" % (f_score(test_set[1], prediction)))
-        if fscore > best_fscore:
-            best_fscore = fscore
+        fscore2 = f_score(test_set[1], prediction)
+        # print("f-score-ul pentru setul de test este %.3f" % (f_score(test_set[1], prediction)))
+        if fscore2 > best_fscore:
+            best_fscore = fscore2
             best_clf = clf
 
         i += 1
 
-        print("Se amesteca datele")
-        print(len(train[0]), len(valid[0]))
+        # print("Se amesteca datele")
+        # print(len(train[0]), len(valid[0]))
         train, valid = cross_validation(train, valid)
 
-    prediction = best_clf.predict(test_set[0])
-    proc2 = test(test_set[1], prediction)
-    print("%.2f" % proc2)
-    print("f-score-ul pentru clasa 1 este %.2f" % (f_score(test_set[1], prediction)))
+    # prediction = best_clf.predict(test_set[0])
+    # proc2 = test(test_set[1], prediction)
+    # print("%.2f" % proc2)
+    print("best fscore: %.2f" % (fscore2))
 
-    return max(proc1, proc2)
     
 
 def vec_avg(v : list) -> list:
@@ -230,46 +236,93 @@ def vec_avg(v : list) -> list:
         ret_vec[i] = ret_vec[i] / vec_nr
     return ret_vec
 
-if __name__ == "__main__":
-    # f = gzip.open("./dataset/dataset.pkl.gz", "rb")
-    # train_set, test_set = pickle.load(f)
-    # f.close()
-    # train_set[0] = list(train_set[0])
-    # test_set[0] = list(test_set[0])
-    # for i, tweet in enumerate(train_set[0]):
-    #     train_set[0][i] = gensim.utils.simple_preprocess(tweet)
-    # for i, tweet in enumerate(test_set[0]):
-    #     test_set[0][i] = gensim.utils.simple_preprocess(tweet)
-    # model = gensim.models.Word2Vec(sentences=(train_set[0] + test_set[0] + gensim.test.utils.common_texts), min_count=3, size=100, iter=30)
-    # model.train(sentences=(train_set[0] + test_set[0]), total_examples=model.corpus_count, epochs=30)
+def vec_sum(v : list) -> list:
+    word_len = len(v[0])
+    ret_list = [0] * word_len
+    for i in v:
+        for j in range(word_len):
+            ret_list[j] += i[j]
+    return ret_list
 
-    # print(model.wv.similar_by_vector(model.wv['adr']))
+def w2v_train():
+    print('incepe antrenarea w2v')
+    text = gensim.models.word2vec.LineSentence('./twitter_corpora/corpora.txt')
+    model = gensim.models.Word2Vec(sentences=text, min_count=5, size=50, iter=30)
+    model.save('./word2vec/w2v_model.bin')
 
-    # for i, tweet in enumerate(train_set[0]):
-    #     avg = []
-    #     for word in tweet:
-    #         if word in model.wv:
-    #             avg.append(model.wv[word])
-    #     if len(avg) > 0:
-    #         train_set[0][i] = vec_avg(avg)
-    #     else:
-    #         train_set[0][i] = [0] * len(model.wv['ref'])
-
-    # for i, tweet in enumerate(test_set[0]):
-    #     avg = []
-    #     for word in tweet:
-    #         if word in model.wv:
-    #             avg.append(model.wv[word])
-    #     if len(avg) > 0:
-    #         test_set[0][i] = vec_avg(avg)
-    #     else:
-    #         test_set[0][i] = [0] * len(model.wv['ref'])
-
-    # train_set = smote_balance(train_set)
+def word2vecing(filename : str, smote=False):
+    model = gensim.models.Word2Vec.load('./word2vec/w2v_model.bin')
+    f = gzip.open(f"./dataset/{filename}.pkl.gz", "rb")
+    train_set, test_set = pickle.load(f)
+    f.close()
+    train_set[0] = list(train_set[0])
+    train_set[1] = list(train_set[1])
+    test_set[0] = list(test_set[0])
+    test_set[1] = list(test_set[1])
     
-    # f = gzip.open(f'./word2vec/smoted_dataset.pkl.gz', 'wb')
-    # pickle.dump([train_set, test_set], f)
-    # f.close()
+    count = 0
+    for i, tweet in enumerate(train_set[0]):
+        avg = []
+        tweet = tweet.split(' ')
+        for word in tweet:
+            if word in model.wv:
+                avg.append(model.wv[word])
+            else:
+                count += 1
+                # print('%s words not found in train_set' % (count), end='\r')
+        if len(avg) > 0:
+            train_set[0][i] = vec_sum(avg)
+        else:
+            train_set[0][i] = [0] * len(model.wv['ref'])
+
+    count = 0
+    for i, tweet in enumerate(test_set[0]):
+        avg = []
+        tweet = tweet.split(' ')
+        for word in tweet:
+            if word in model.wv:
+                avg.append(model.wv[word])
+            else:
+                count += 1
+                # print('%s words not found in test_set' % (count), end='\r')
+        if len(avg) > 0:
+            test_set[0][i] = vec_sum(avg)
+        else:
+            test_set[0][i] = [0] * len(model.wv['ref'])
+
+    smote_str = ''
+    if smote == True:
+        train_set = smote_balance(train_set)
+        smote_str = 'smoted_'
+
+    f = gzip.open(f'./word2vec/{smote_str}{filename}.pkl.gz', 'wb')
+    pickle.dump([train_set, test_set], f)
+    f.close()
+
+def neural_net(train, test):
+    wandb.init(project="bachelor")
+    keras_model = Sequential()
+    keras_model.add(Dense(len(train[0][0]), activation="relu"))
+    keras_model.add(Dense(80, activation="relu"))
+    keras_model.add(Dense(20, activation="relu"))
+    keras_model.add(Dense(1, activation="sigmoid"))
+
+    keras_model.compile(loss="binary_crossentropy", optimizer="adam", metrics=['accuracy', metrics.TruePositives(), metrics.TrueNegatives(), metrics.FalsePositives(), metrics.FalseNegatives()])
+    keras_model.fit(train[0], train[1], batch_size=2, epochs=4, callbacks=[WandbCallback()])
+    loss, acc, tp, fp, tn, fn = keras_model.evaluate(test[0], test[1])
+
+    p = tp / (tp + fp)
+    r = tp / (tp + fn)
+
+    print(f'f-score is: {(2 * p * r) / (p + r)}') 
+
+
+
+
+if __name__ == "__main__":
+    
+    # word2vecing('12dataset')
+
 
     f = gzip.open(f'./word2vec/smoted_dataset.pkl.gz', 'rb')
     train_set, test_set = pickle.load(f)
@@ -281,17 +334,17 @@ if __name__ == "__main__":
     # print(scaler.mean_)
     # train_set[0] = scaler.transform(train_set[0])
 
-    clf = svm.SVC()
-    print(train(train_set, test_set, clf))
+    neural_net(train_set, test_set)
 
-    clf = RandomForestClassifier(n_estimators=20)
-    print(train(train_set, test_set, clf))
+    # clf = svm.SVC(C=2, kernel='rbf')
+    # train(train_set, test_set, clf)
 
-    # clf = AdaBoostClassifier(n_estimators=100)
-    # print(train(train_set, test_set, clf))
+    # clf = GaussianNB()
+    # train(train_set, test_set, clf)
 
-    # clf = GradientBoostingClassifier(n_estimators=100)
-    # print(train(train_set, test_set, clf))
+
+    # clf = LogisticRegression(warm_start=True, max_iter=200)
+    # train(train_set, test_set, clf)
 
 
     

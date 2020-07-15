@@ -1,0 +1,26 @@
+\chapter{Balansarea datelor}
+
+Cum am spus într-un capitol anterior, datele din setul de date dat are datele extrem de nebalansate. Mai
+precis, 10\% din date sunt de clasă 1, iar restul de 90\% sunt de clasă 0. Inițial am încercat să antrenez
+clasificatorul fără a balansa datele, dar rezultatul, evident, a fost foarte slab, clasificatorul prezincând
+în majoritatea cazurilor (peste 95 la sută) că datele sunt de clasă 0.
+
+Am folosit două tehnici de balansare a datelor: metoda "undersampling" și algoritmul SMOTE (Syntethic Minority Oversample Technique).
+Metoda undersampling presupune folosirea mai puținor date din clasa majoritară, raportate la clasa minoritară.
+Am făcut mai multe teste, folosind rapoartele 1:2, 1:3, 1:4 și 1:5, iar tweet-urile nefolosite le-am folosit în setul de test,
+cele mai bune rezultate fiind date de
+cel dintâi. Rezultatele obținute, folosind toate cele trei metode de encodare a tweet-urilor în vectori (n-grame, Word2Vec și fasttext),
+au fost decente, mai bune decât în cazul în care dar nu am folosit nicio tehnică, dar nu a fost destul, așa că
+am încercat și algoritmul SMOTE.
+
+Algoritmul SMOTE reprezintă o metodă ingenioasă de a genera noi date, folosindu-se de datele actuale. Această generare 
+se face pe baza alegerii de puncte aleatoare în hiperspațiul definit de către caracteristicle tweet-urilor. 
+Mai exact, se alege aleator un punct (adică un tweet), după care se alege aleator dintre cei mai apropiați k vecini
+un punct. În final, pe dreapta care trece prin aceste două puncte alese, se alege aleator un punct între acestea, acest
+nou punct desemnând noul tweet generat artificial. Pentru folosirea acestei metode, am ales să nu folosesc nicio librărie și
+să-mi fac singur implementarea, care în idee pare extraordinar de simplă și elegantă. Într-adevăr, nu am întâmpinat dificultăți,
+doar faptul că a trebuit să deduc singur formula pentru o găsi un punct pe o dreaptă într-un hiperspațiu. Formula se bazează pe
+un exemplu găsit \href{http://mathcentral.uregina.ca/QQ/database/QQ.09.01/murray2.html}{aici}, eu doar generalizându-l.
+
+Rezultatele obținute folosind acest algoritm au fost cele mai bune, așa că am decis ca acesta să fie algoritmul final de balansare
+a datelor.
